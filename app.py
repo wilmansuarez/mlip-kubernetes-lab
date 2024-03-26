@@ -5,12 +5,19 @@ from flask import Flask, send_file
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import io
+import os
 import threading
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
 lock = threading.Lock()
 request_times = []
+
+
+@app.route("/crash")
+def crash():
+    print("This app is crashing...")
+    os._exit(1)
 
 
 @app.route("/cpu-load")
