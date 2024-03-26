@@ -13,6 +13,12 @@ lock = threading.Lock()
 request_times = []
 
 
+@app.route("/cpu-load")
+def cpu_load():
+    result = sum(i * i for i in range(10000000))
+    return f"Sum is {result}"
+
+
 @app.route("/")
 def index():
     with lock:
