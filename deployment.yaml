@@ -1,24 +1,24 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: apps/v1  # Specifies the API version for the Deployment
+kind: Deployment  # Defines this resource as a Deployment
 metadata:
-  name: flask-app
+  name: flask-app  # Names the Deployment for referencing within the cluster
 spec:
-  replicas: 2  # start with 2 replicas
+  replicas: 2  # Specifies that 2 instances of the Pod should be running
   selector:
     matchLabels:
-      app: flask-app
-  template:
+      app: flask-app  # Selects Pods with the label 'app' equal to 'flask-app' to manage
+  template:  # Template for the Pods that will be created
     metadata:
       labels:
-        app: flask-app
-    spec:
+        app: flask-app  # Labels the Pods with 'app' equal to 'flask-app'
+    spec:  # Specification of the Pod's containers and their settings
       containers:
-      - name: flask-app
-        image: marliesgoes/mlip-kubernetes-lab:latest
+      - name: flask-app  # Names the container within the Pod
+        image: marliesgoes/mlip-kubernetes-lab:latest  # Specifies the Docker image to use
         ports:
-        - containerPort: 5001
-        resources:
-          requests:
-            cpu: "100m"  # Request 100 millicpu (0.1 CPU)
-          limits:
-            cpu: "200m"  # Limit to 200 millicpu (0.2 CPU)
+        - containerPort: 5001  # The port that the container listens to
+        resources:  # Specifies the CPU and memory resources to allocate/limit
+          requests:  # The minimum resources the container should have
+            cpu: "100m"  # Requests 100 millicpu (0.1 CPU), ensuring this amount is reserved for the container
+          limits:  # The maximum resources the container is allowed to use
+            cpu: "200m"  # Limits the container to a maximum of 200 millicpu (0.2 CPU)
