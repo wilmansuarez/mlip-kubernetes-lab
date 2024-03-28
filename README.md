@@ -36,10 +36,10 @@ The `service.yaml` abstracts the access to the pods, providing a stable endpoint
 - **Deliverable:** Explore the dashboard and find out how to view the logs of a certain Pod.
 
 ## 3. Deploy an Update
-With Kubernetes we can seemlessly deploy an update of our app. We have already created an updated version of the flask app and pushed it to the Docker registry. 
+With Kubernetes we can seemlessly deploy an update of our app. There is an updated version of the flask app available in the Docker registry. All you have to do, is change the version number in your deployment.
 
 - In your `deployment.yaml` you can see that we have currently deployed the Docker image with version `1.0.0`. Go to the dashboard and locate the version number in the image name. Verify that it is indeed `marliesgoes/mlip-kubernetes-lab:1.0.0`.
-- Update the file to version `1.0.1`. 
+- Update the version in the `deployment.yaml` to `1.0.1`. 
 - **Deliverable:** Apply the changes with `kubectl apply -f deployment.yaml` and directly switch back to the dashboard. Observe how Kubernetes deploys the update and explain to the TA what happened.
 
 ## 4. Test Auto-Restarts
@@ -63,14 +63,14 @@ When something unexpected happens and our server crashes, Kubernetes automatical
     - #min-pods: Decide on how many pods you want to start at least
     - #max-pods: Decide on how many pods you want to start at most
     - trigger-threshold: Decide on how much percent of the CPU has to be used to trigger the autoscaler
-- `kubectl get hpa`
+- Run `kubectl get hpa` to show the status of your autoscaler.
 
 ### Stresstest Application Again
 - Run the stresstest again and check the dashboard.
 - **Deliverable:** Take a screenshots of the list of Pods to show that the system auto-scaled.
 
 
-### Troubleshooting
+## Troubleshooting
 - `kubectl get pods` to show running pods
 - `kubectl logs <affected-pod-id>` to show error message of crashed pod
 - `kubectl delete pods -l app=flask-app` to delete pods
