@@ -1,12 +1,13 @@
 # Lab 9: Kubernetes
-<TODO: Add intro>
+In Lab 9, we will explore the fundamental aspects of deploying and managing applications in Kubernetes. You'll learn how to create and apply deployment and service configurations, perform updates, and observe Kubernetes' self-healing and autoscaling mechanisms in action.
 
 To receive credit for this lab, show your work to the TA during recitation.
 
 ## Deliverables
 - [ ] Show the TA the logs of one Pod in the MiniKube dashboard
+- [ ] Explain to the TA how Kubernetes deploys updates
 - [ ] Show a screenshot of the crashed Pod(s)
-- [ ] Explain how autoscaling is set up and show the screenshot of the multiple Pods
+- [ ] Explain how you set up autoscaling and show the screenshot of the multiple Pods
 
 ## Getting started
 - Start Docker
