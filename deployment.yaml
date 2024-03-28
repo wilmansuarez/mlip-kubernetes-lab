@@ -14,7 +14,7 @@ spec:
     spec:  # Specification of the Pod's containers and their settings
       containers:
       - name: flask-app  # Names the container within the Pod
-        image: marliesgoes/mlip-kubernetes-lab:latest  # Specifies the Docker image to use
+        image: marliesgoes/mlip-kubernetes-lab:1.0.0  # Specifies the Docker image to use
         ports:
         - containerPort: 5001  # The port that the container listens to
         resources:  # Specifies the CPU and memory resources to allocate/limit
