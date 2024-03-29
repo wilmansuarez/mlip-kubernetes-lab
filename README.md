@@ -7,7 +7,6 @@ To receive credit for this lab, show your work to the TA during recitation.
 - [ ] Show the TA the logs of one Pod in the MiniKube dashboard
 - [ ] Explain to the TA how Kubernetes deploys updates
 - [ ] Show a screenshot of the crashed Pod(s)
-- [ ] Explain how you set up autoscaling and show the screenshot of the multiple Pods
 
 ## Getting started
 - Start Docker
@@ -48,7 +47,7 @@ When something unexpected happens and our server crashes, Kubernetes automatical
 - **Deliverable:** Call the crash-endpoint to simulate a crashed server `<endpoint>/crash`. Quickly switch to the dashboard and take a screenshot of the crashed pods.
 - Watch the pods restart.
 
-## 5. Enable Autoscaling with Kubernetes
+## Optional if you're bored: Enable Autoscaling with Kubernetes
 
 ### Stresstest Application
 - Use a tool to programmatically call the server many times. For example use `ab -n 1000 -c 10 <endpoint>` to incrementally run up to 1000 API calls. Reload the page to see the effect.
