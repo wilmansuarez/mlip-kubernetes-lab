@@ -1,75 +1,109 @@
-# Lab 9: Kubernetes
-In Lab 9, we will explore the fundamental aspects of deploying and managing applications in Kubernetes. You'll learn how to create and apply deployment and service configurations, perform updates, and observe Kubernetes' self-healing and autoscaling mechanisms in action.
+# Lab 9: Advanced Kubernetes Deployment with Multiple Services and Load Balancing
 
-To receive credit for this lab, show your work to the TA during recitation.
+In this lab, you will go beyond deploying a single service. You'll set up multiple instances of an application with different services, simulate load balancing, and observe how Kubernetes distributes traffic. You will also experience Kubernetes' self-healing, autoscaling, and traffic management capabilities.
+
+## Objectives
+- Deploy multiple services in Kubernetes
+- Set up a load balancer to distribute traffic across services
+- Observe how Kubernetes handles updates, self-healing, and autoscaling
 
 ## Deliverables
 - [ ] Show the TA the logs of one Pod in the MiniKube dashboard
-- [ ] Explain to the TA how Kubernetes deploys updates
+- [ ] Explain to the TA how Kubernetes deploys updates and manages multiple services
 - [ ] Show a screenshot of the crashed Pod(s)
+- [ ] Take a screenshot of the load balancer distributing traffic across multiple services
 
-## Getting started
-- Start Docker
-- Install MiniKube https://minikube.sigs.k8s.io/docs/start/ (i.e. `brew install minikube` for MacOS)
-- Start MiniKube with `minikube start`
-- Run `kubectl get po -A` to check that MiniKube is running and to show stats
+---
 
-## 1. Apply the Deployment and Service files
-In Kubernetes, a `deployment.yaml` is needed to manage the desired state of your application, specifying how many replicas of a pod should be running and how they should be updated, providing declarative updates, scalability, and self-healing mechanisms. 
+## Getting Started
+1. **Start Docker**
+2. **Install MiniKube**: Follow instructions [here](https://minikube.sigs.k8s.io/docs/start/).
+3. **Start MiniKube**: Run `minikube start`
+4. Verify MiniKube: Run `kubectl get po -A` to ensure it's running.
 
-The `service.yaml` abstracts the access to the pods, providing a stable endpoint for communication, load balancing, and service discovery. Together, these configurations ensure that your application is reliably deployed, maintained, and accessible within the Kubernetes cluster, allowing it to be scaled and managed efficiently.
+---
 
-- Familiarize yourself with the two files [deployment.yaml](https://github.com/marliesgoes/mlip-kubernetes-lab/blob/6a9e180b41bd7718b73a55193ac7f5821290645b/deployment.yaml) and [service.yaml](https://github.com/marliesgoes/mlip-kubernetes-lab/blob/6a9e180b41bd7718b73a55193ac7f5821290645b/service.yaml).
-- Either [clone the repo](https://github.com/marliesgoes/mlip-kubernetes-lab/) or download just the two yaml files (you won't need the other stuff in the repo). 
-- Edit the `service.yaml` and give your service a name.
-- Apply both files with the following commands:
-    - `kubectl apply -f deployment.yaml`
-    - `kubectl apply -f service.yaml`
-- Your new service should now show up at `kubectl get services`
+### Step 1: Apply the Deployment and Multiple Service Configurations
+You will configure multiple instances of a service and a load balancer.
 
-## 2. Start the Service
-- Run `kubectl get services` to check the available services. One of them should be your created service of type `NodePort`
-- Launch the service with `minikube service <my-fun-service-name>`
-- Launch the MiniKube dashboard with `minikube dashboard`
-- Open the displayed URL to test the app. You can see the code for the app in [app.py](https://github.com/marliesgoes/mlip-kubernetes-lab/blob/6a9e180b41bd7718b73a55193ac7f5821290645b/app.py). All it does is counting the number of GET-requests and displaying the average requests per second during the past 10 minutes. Reload the page a couple of times to see the effect.
-- **Deliverable:** Explore the dashboard and find out how to view the logs of a certain Pod.
+1. **Download the YAML files**:
+   - `deployment.yaml`: Manages the desired state of your app, including replica counts and update strategy.
+   - `service1.yaml` and `service2.yaml`: Create two separate services with different configurations or ports.
+   - `loadbalancer-service.yaml`: Sets up a LoadBalancer service to route traffic between services.
 
-## 3. Deploy an Update
-With Kubernetes we can seemlessly deploy an update of our app. There is an updated version of the flask app available in the Docker registry. All you have to do, is change the version number in your deployment.
+2. **Apply Configurations**:
+   - Deploy the services and load balancer:
+     ```bash
+     kubectl apply -f deployment.yaml
+     kubectl apply -f service1.yaml
+     kubectl apply -f service2.yaml
+     kubectl apply -f loadbalancer-service.yaml
+     ```
+   - Verify services with `kubectl get services`. You should see both services and the load balancer listed.
 
-- In your `deployment.yaml` you can see that we have currently deployed the Docker image with version `1.0.0`. Go to the dashboard and locate the version number in the image name. Verify that it is indeed `marliesgoes/mlip-kubernetes-lab:1.0.0`.
-- Update the version in the `deployment.yaml` to `1.0.1`. 
-- **Deliverable:** Apply the changes with `kubectl apply -f deployment.yaml` and directly switch back to the dashboard. Observe how Kubernetes deploys the update and explain to the TA what happened.
+---
 
-## 4. Test Auto-Restarts
-When something unexpected happens and our server crashes, Kubernetes automatically restarts the affected system.
+### Step 2: Set Up a Load Balancer
+1. **Test the Load Balancer**:
+   - Access the load balancer URL. Refresh the page multiple times to observe which pod or service instance responds to each request.
+   - **Deliverable**: Take a screenshot showing the distributed traffic in the dashboard.
 
-- **Deliverable:** Call the crash-endpoint to simulate a crashed server `<endpoint>/crash`. Quickly switch to the dashboard and take a screenshot of the crashed pods.
-- Watch the pods restart.
+---
 
-## Optional if you're bored: Enable Autoscaling with Kubernetes
+### Step 3: Start the Service and Observe
+1. **Launch MiniKube Dashboard**: Run `minikube dashboard`.
+2. **Verify Service Logs**:
+   - In the MiniKube dashboard, find one of the pods for `flask-app`.
+   - View and show the logs to the TA.
+   - **Deliverable**: Take a screenshot of the logs.
 
-### Stresstest Application
-- Use a tool to programmatically call the server many times. For example use `ab -n 1000 -c 10 <endpoint>` to incrementally run up to 1000 API calls. Reload the page to see the effect.
-- See how it affects CPU usage with the dashboard.
+---
 
-### Launch Autoscaling
-- Get the latest version of the metrics-server addon with `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml`
-- Enable the addon with `minikube addons enable metrics-server`
-- Check that metrics-server is active `kubectl get deployment metrics-server -n kube-system`
-- Setup autoscaling to automatically launch more pods if necessary. Use the following command and fill out the parameters: `kubectl autoscale deployment <deployment-name> --min=<#min-pods> --max=<#max-pods> --cpu-percent=<trigger-threshold>`
-    - deployment-name: Find deployment name in the `deployments.yaml`
-    - #min-pods: Decide on how many pods you want to start at least
-    - #max-pods: Decide on how many pods you want to start at most
-    - trigger-threshold: Decide on how much percent of the CPU has to be used to trigger the autoscaler
-- Run `kubectl get hpa` to show the status of your autoscaler.
+### Step 4: Deploy an Update and Observe Traffic Distribution
+1. **Update the `deployment.yaml`**:
+   - Change the Docker image version from `1.0.0` to `1.0.1`.
+   - Apply the update:
+     ```bash
+     kubectl apply -f deployment.yaml
+     ```
+2. **Observe the Update**: Switch to the dashboard to observe how Kubernetes manages traffic and deploys updates.
+   - **Deliverable**: Explain to the TA how traffic is balanced across updated services and how Kubernetes handles updates.
 
-### Stresstest Application Again
-- Run the stresstest again and check the dashboard.
-- **Deliverable:** Take a screenshots of the list of Pods to show that the system auto-scaled.
+---
 
+### Step 5: Test Auto-Restarts and Self-Healing
+1. **Simulate a Crash**: Access the `<endpoint>/crash` URL to crash a service.
+2. **Observe Self-Healing**: Quickly return to the dashboard and watch the Pods restart automatically.
+   - **Deliverable**: Capture a screenshot of the crashed and restarted Pods.
 
-## Troubleshooting
-- `kubectl get pods` to show running pods
-- `kubectl logs <affected-pod-id>` to show error message of crashed pod
-- `kubectl delete pods -l app=flask-app` to delete pods
+---
+
+### Step 6: Enable Autoscaling (Optional)
+1. **Set up Autoscaling**:
+   - Install the metrics-server addon:
+     ```bash
+     kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+     minikube addons enable metrics-server
+     ```
+   - Confirm it's running with:
+     ```bash
+     kubectl get deployment metrics-server -n kube-system
+     ```
+2. **Configure Autoscaling**:
+   - Set up autoscaling for your deployment:
+     ```bash
+     kubectl autoscale deployment flask-app --min=2 --max=5 --cpu-percent=70
+     ```
+   - Verify autoscaling with `kubectl get hpa`.
+
+3. **Stress Test**:
+   - Use `ab -n 1000 -c 10 <load-balancer-endpoint>` to simulate heavy traffic.
+   - Observe in the dashboard how autoscaling adds more pods.
+   - **Deliverable**: Take a screenshot of the auto-scaled Pods list.
+
+---
+
+### Troubleshooting
+- `kubectl get pods` to view running Pods
+- `kubectl logs <pod-name>` to see Pod logs
+- `kubectl delete pods -l app=flask-app` to manually delete and restart Pods
