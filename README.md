@@ -1,108 +1,150 @@
-# Lab: Deploy Flask Backend with Python Load Balancer on Kubernetes with AB Testing
+# Lab: Deploy Flask Backend with Python Load Balancer on Kubernetes
 
-In this lab, you'll deploy multiple instances of a Flask backend on Kubernetes, set up a Python-based load balancer, and perform load testing using Apache Benchmark (AB). By the end of the lab, you'll have a Kubernetes setup that distributes traffic to multiple backend instances, allowing you to test the load balancer's performance.
+In this lab, you'll set up and deploy multiple instances of a Flask backend on Kubernetes, configure a Python-based load balancer to distribute traffic across the backend instances, and perform load testing using Apache Benchmark (AB). This lab will introduce you to managing Kubernetes deployments with multiple services, simulating load balancing, and observing request distribution. By the end, you'll have experience with Kubernetes’ traffic management, service discovery, and how to test a load balancer's performance.
+
+## Objectives
+- Deploy multiple services in Kubernetes for a distributed backend application.
+- Set up a Python-based load balancer to route traffic across backend instances.
+- Use `minikube service` for accessing services if NodePort is unavailable.
+- Perform load testing with Apache Benchmark to evaluate traffic distribution.
 
 ## Deliverables
-
 - [ ] Show the TA the logs of one backend Pod in the MiniKube dashboard.
-- [ ] Explain to the TA how the load balancer distributes requests to the backend instances.
+- [ ] Explain to the TA how the load balancer distributes requests to backend instances.
 - [ ] Show a screenshot of Apache Benchmark (AB) test output with performance metrics.
-- [ ] Demonstrate using `minikube service` to access the load balancer if NodePort does not work.
+- [ ] Explain how this setup could be applied in Milestone 3.
 
 ---
 
-## Lab Instructions
+## Getting Started
+1. **Start Docker**: Ensure Docker is running on your machine.
+2. **Install MiniKube**: Follow instructions [here](https://minikube.sigs.k8s.io/docs/start/).
+3. **Start MiniKube**: Start MiniKube on your local setup. Run `minikube start`.
+4. **Verify MiniKube**: Confirm that MiniKube is running by listing all pods:
+```
+kubectl get po -A
+```
 
-### Part 1: Set Up the Flask Backend Application
-
-1. **Create the Flask Backend Application**:
-   - Write a simple Flask application (`backend.py`) that responds with a personalized message based on a user ID.
-   - **TODO**: Customize the response message and include a unique identifier for each backend instance.
-
-2. **Containerize the Backend**:
-   - Write a Dockerfile for the backend application.
-   - **TODO**: Replace placeholder Docker Hub username with your own Docker Hub repository details.
-
-3. **Build and Push Docker Image**:
-   - Build and push the Docker image for the backend to your Docker Hub repository.
-   - **TODO**: Use your Docker Hub username to create the image tag.
 
 ---
 
-### Part 2: Deploy the Backend on Kubernetes
+### Step 1: Set Up and Deploy the Flask Backend
 
-1. **Create Backend Deployment and Service Files**:
-   - Define a deployment YAML file for the backend with multiple replicas.
-   - Define a service YAML file to expose the backend internally within the Kubernetes cluster.
-   - **TODO**: Replace placeholders in the YAML files with your Docker Hub image name and specify unique identifiers as needed.
+1. **Download the Backend Code**: Obtain the files `backend.py` and `Dockerfile.backend`.
+2. **Edit the Flask Backend**:
+- Customize the response message in `backend.py` to include a unique identifier for each backend instance.
+- **TODO**: Add a unique message or identifier to distinguish responses from different backend instances.
+3. **Containerize the Backend**:
+- Edit `Dockerfile.backend` to set up the Flask app, exposing port 5001.
+- **TODO**: Replace `<your-dockerhub-username>` with your Docker Hub username when creating the image.
+4. **Build and Push the Docker Image**:
+```
+docker build -t <your-dockerhub-username>/<backend-image-name>:1.0.0 -f Dockerfile.backend . 
+docker push <your-dockerhub-username>/<backend-image-name>:1.0.0
+```
 
-2. **Apply the Backend Configuration**:
-   - Deploy the backend application and service on Kubernetes by applying the YAML files.
 
----
-
-### Part 3: Set Up the Python Load Balancer
-
-1. **Create the Load Balancer Application**:
-   - Write a Python load balancer (`load_balancer.py`) using Flask that distributes requests to backend instances in a round-robin fashion.
-   - **TODO**: Add multiple backend URLs if desired, and customize the load balancer response to indicate which backend instance is handling each request.
-
-2. **Containerize the Load Balancer**:
-   - Write a Dockerfile for the load balancer application.
-   - **TODO**: Replace Docker Hub username with your own repository details.
-
-3. **Build and Push Load Balancer Docker Image**:
-   - Build and push the load balancer Docker image to your Docker Hub repository.
-
----
-
-### Part 4: Deploy the Load Balancer on Kubernetes
-
-1. **Create Load Balancer Deployment and Service Files**:
-   - Define a deployment YAML file for the load balancer with one replica.
-   - Define a NodePort service YAML file to expose the load balancer on an accessible port.
-   - **TODO**: Replace placeholders in the YAML files with your Docker Hub image name and specify unique service names as needed.
-
-2. **Apply the Load Balancer Configuration**:
-   - Deploy the load balancer service on Kubernetes by applying the YAML files.
+5. **Configure Deployment and Service**:
+- Edit `backend-deployment.yaml` and `backend-service.yaml`.
+- **TODO**: In the YAML files, replace placeholders with your Docker Hub image and specify unique service names if needed.
+6. **Deploy the Backend**:
+```
+kubectl apply -f backend-deployment.yaml 
+kubectl apply -f backend-service.yaml
+```
 
 ---
 
-### Part 5: Access and Test the Load Balancer
+### Step 2: Set Up the Python Load Balancer
+
+1. **Download Load Balancer Code**: Obtain `load_balancer.py` and `Dockerfile.loadbalancer`.
+2. **Edit the Load Balancer Application**:
+- Customize `load_balancer.py` to use round-robin distribution across backend instances.
+- **TODO**: Add backend URLs for round-robin distribution and retrieve `user_id` from query parameters.
+3. **Containerize the Load Balancer**:
+- Edit `Dockerfile.loadbalancer`.
+- **TODO**: Replace `<your-dockerhub-username>` with your Docker Hub username when creating the image.
+4. **Build and Push the Docker Image**:
+```
+docker build -t <your-dockerhub-username>/<load-balancer-image-name>:1.0.0 -f Dockerfile.loadbalancer .
+docker push <your-dockerhub-username>/<load-balancer-image-name>:1.0.0
+```
+
+---
+
+### Step 3: Deploy the Load Balancer on Kubernetes
+
+1. **Edit Load Balancer Deployment and Service Files**:
+- Edit `loadbalancer-deployment.yaml` and `loadbalancer-service.yaml`.
+- **TODO**: Specify your Docker Hub image in the YAML files, and ensure unique service names if deploying multiple services.
+2. **Deploy the Load Balancer**:
+```
+kubectl apply -f loadbalancer-deployment.yaml 
+kubectl apply -f loadbalancer-service.yaml
+```
+
+---
+
+### Step 4: Access the Load Balancer and Test Traffic
 
 1. **Access via NodePort**:
-   - Use `minikube ip` to get the MiniKube IP and access the load balancer using NodePort.
-   - **TODO**: Test the setup with a `curl` command to ensure the load balancer is reachable and distributing requests correctly.
+- Get the MiniKube IP:
+  ```
+  minikube ip
+  ```
+- Access the load balancer using `curl` (replace `<minikube-ip>` with the output from `minikube ip`):
+  ```
+  curl "http://<minikube-ip>:30080/?user_id=Alice"
+  ```
 
 2. **Use `minikube service` (If NodePort Does Not Work)**:
-   - If NodePort access isn’t working, use `minikube service` to create a tunnel to the load balancer.
-   - **TODO**: Use the URL provided by `minikube service` to access the load balancer and verify round-robin request distribution.
+- Create a tunnel to the load balancer service:
+  ```
+  minikube service flask-load-balancer-service
+  ```
+- This command will provide a URL, typically in the format `http://127.0.0.1:<some-port>`, which you can use to test the load balancer.
 
 3. **Launch MiniKube Dashboard**:
-   - Run `minikube dashboard` in a separate terminal to open the MiniKube dashboard for monitoring the status of the Pods and services.
+- Open the MiniKube dashboard to monitor the status of Pods, deployments, and services:
+  ```
+  minikube dashboard
+  ```
 
 ---
 
-### Part 6: AB Testing with Apache Benchmark
+### Step 5: Load Testing with Apache Benchmark (AB)
 
 1. **Run Basic AB Test**:
-   - Use Apache Benchmark to send a series of requests to the load balancer.
-   - **TODO**: Run a basic AB test with 100 requests and 10 concurrent connections.
+- Use Apache Benchmark to send a series of requests to the load balancer:
+  ```
+  ab -n 100 -c 10 "http://127.0.0.1:<some-port>/?user_id=Alice"
+  ```
+- **TODO**: Replace `<some-port>` with the port provided by `minikube service`.
+- This test sends 100 requests (`-n 100`) with 10 concurrent connections (`-c 10`).
 
 2. **Perform High-Load AB Test (Optional)**:
-   - Increase the request count and concurrency level to simulate high traffic.
-   - **TODO**: Observe load balancer performance under high load and check backend Pod distribution.
+- Increase the request count and concurrency level to simulate high traffic:
+  ```
+  ab -n 1000 -c 50 "http://127.0.0.1:<some-port>/?user_id=Alice"
+  ```
+- Observe load balancer performance under high load and check backend Pod distribution.
 
 3. **Observe Load Balancer Logs (Optional)**:
-   - Monitor the backend logs in real-time to verify that the load balancer distributes requests evenly across backend instances.
+- Monitor the backend logs in real-time to verify that the load balancer distributes requests evenly:
+
+  ```
+  kubectl logs -l app=flask-backend -f
+  ```
 
 ---
 
-## Testing the Load Balancer
+## Troubleshooting
 
-### Calling the Load Balancer with `curl`
-
-Use the following `curl` command to test your load balancer setup, replacing `<minikube-ip>` and `<some-port>` with the appropriate IP and port:
-
-```bash
-curl "http://<minikube-ip>:30080/?user_id=Alice"
+- **Minikube IP Issues**: Use `minikube ip` to verify the correct IP.
+- **Service Not Accessible**: If NodePort does not work, use `minikube service` to create a tunnel.
+- **Backend Logs**: Use `kubectl logs -l app=flask-backend -f` to monitor requests going to the backend.
+- **Load Balancer Logs**: Check the load balancer logs to see the request distribution:
+   ```
+  kubectl logs -l app=flask-load-balancer -f
+  ```
+- **Image Pull Issues**: Ensure your Docker images are pushed to Docker Hub with the correct tags. [More Details](https://docs.docker.com/get-started/introduction/build-and-push-first-image/)
