@@ -16,7 +16,6 @@ server_pool = itertools.cycle(BACKEND_SERVERS)
 @app.route('/')
 def load_balance():
     backend_url = next(server_pool)
-    # TODO: Retrieve user_id from the query parameters and pass it to the backend
     user_id = request.args.get("user_id", "Guest")
     response = requests.get(f"{backend_url}/", params={"user_id": user_id})
     return response.text
