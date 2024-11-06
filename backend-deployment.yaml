@@ -15,6 +15,6 @@ spec:
       containers:
       - name: flask-backend
         # TODO: Replace <your-dockerhub-username> with your Docker Hub username
-        image: <your-dockerhub-username>/<image-name>:1.0.0
+        image: <your-dockerhub-username>/<backend-image-name>:1.0.0
         ports:
         - containerPort: 5001
