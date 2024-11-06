@@ -18,9 +18,10 @@ In this lab, you'll set up and deploy multiple instances of a Flask backend on K
 
 ## Getting Started
 1. **Start Docker**: Ensure Docker is running on your machine.
-2. **Install MiniKube**: Follow instructions [here](https://minikube.sigs.k8s.io/docs/start/).
-3. **Start MiniKube**: Start MiniKube on your local setup. Run `minikube start`.
-4. **Verify MiniKube**: Confirm that MiniKube is running by listing all pods:
+2. **Fork Repo**: Fork this [repo](https://github.com/purvag03/mlip-kubernetes-lab/tree/main)
+3. **Install MiniKube**: Follow instructions [here](https://minikube.sigs.k8s.io/docs/start/).
+4. **Start MiniKube**: Start MiniKube on your local setup. Run `minikube start`.
+5. **Verify MiniKube**: Confirm that MiniKube is running by listing all pods:
 ```
 kubectl get po -A
 ```
@@ -103,6 +104,7 @@ kubectl apply -f loadbalancer-service.yaml
   minikube service flask-load-balancer-service
   ```
 - This command will provide a URL, typically in the format `http://127.0.0.1:<some-port>`, which you can use to test the load balancer.
+- Send multiple requests and see how each request is being served by a different instance. Show this to the TA. 
 
 3. **Launch MiniKube Dashboard**:
 - Open the MiniKube dashboard to monitor the status of Pods, deployments, and services:
