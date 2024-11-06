@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  # TODO: Add a unique name if deploying multiple backends
+  name:  # TODO: Add a unique name 
 spec:
   replicas:   # TODO: Adjust the replica count as desired
   selector:
