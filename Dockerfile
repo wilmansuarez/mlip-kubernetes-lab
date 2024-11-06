@@ -1,20 +1,17 @@
-# Use an official Python runtime as the base image
+# Use a lightweight Python image
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Copy the app file
+COPY backend.py /app
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Flask
+RUN pip install Flask
 
-# Make port 5001 available to the world outside this container
+# Expose the application port
 EXPOSE 5001
 
-# Define environment variable
-ENV NAME World
-
-# Run app.py when the container launches
-CMD ["python", "app.py"]
+# Run the Flask app
+CMD ["python", "backend.py"]
