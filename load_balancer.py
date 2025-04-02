@@ -1,16 +1,15 @@
-# load_balancer.py
 from flask import Flask, request
 import itertools
 import requests
 
 app = Flask(__name__)
 
-# TODO: Add backend server URL for round-robin distribution
+# 🔄 TODO: Agregar las URLs del backend para distribuir tráfico en round-robin
 BACKEND_SERVERS = [
-   # "http://<unique-service-name>:5001"
+    "http://flask-backend-service:5001",  # Asegúrate de usar el nombre del servicio en Kubernetes
 ]
 
-# Round-robin iterator for distributing requests
+# Round-robin iterator para distribuir las solicitudes
 server_pool = itertools.cycle(BACKEND_SERVERS)
 
 @app.route('/')
@@ -21,5 +20,5 @@ def load_balance():
     return response.text
 
 if __name__ == '__main__':
-    # TODO: Change the port if necessary (default is 8080)
+    # Puedes cambiar el puerto si es necesario
     app.run(host='0.0.0.0', port=8080)

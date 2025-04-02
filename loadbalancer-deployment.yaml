@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: flask-load-balancer
 spec:
-  replicas: 1 
+  replicas: 1  # Puedes cambiarlo si necesitas más instancias
   selector:
     matchLabels:
       app: flask-load-balancer
@@ -14,7 +14,6 @@ spec:
     spec:
       containers:
       - name: flask-load-balancer
-        # TODO: Replace <your-dockerhub-username> with your Docker Hub username
-        image: <your-dockerhub-username>/<loadbalancer-image-name>:1.0.0
+        image: wilmans/flask-loadbalancer:1.0.0  # Reemplaza con tu imagen de Docker Hub
         ports:
         - containerPort: 8080

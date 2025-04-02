@@ -1,17 +1,18 @@
-# Use a lightweight Python image
+# Use una imagen ligera de Python
 FROM python:3.9-slim
 
-# Set the working directory
+# Establecer el directorio de trabajo
 WORKDIR /app
 
-# Copy the app file
+# Copiar el código de la app
 COPY backend.py /app
 
-# Install Flask
+# Instalar Flask
 RUN pip install Flask
 
-# Expose the application port
+# Exponer el puerto de la aplicación
 EXPOSE 5001
 
-# Run the Flask app
+# Ejecutar la aplicación Flask
 CMD ["python", "backend.py"]
+
